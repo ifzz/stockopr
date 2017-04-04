@@ -9,8 +9,8 @@ db_host = config.db_host
 
 def get_connection():
     connection = pymysql.connect(host=db_host,
-        user='kylin',
-        password='Jkimjl-106224',
+        user=config.db_user,
+        password=config.db_passwd,
         db=db,
         charset='utf8',
         cursorclass=pymysql.cursors.DictCursor)
@@ -18,8 +18,8 @@ def get_connection():
 
 def get_connection_list():
     connection = pymysql.connect(host=db_host,
-        user='kylin',
-        password='Jkimjl-106224',
+        user=config.db_user,
+        password=config.db_passwd,
         db=db,
         charset='utf8')
     return connection
@@ -27,8 +27,8 @@ def get_connection_list():
 # cur.execute('SET autocommit = 0')
 def get_connection_auto_commit():
     connection = pymysql.connect(host=db_host,
-        user='kylin',
-        password='Jkimjl-106224',
+        user=config.db_user,
+        password=config.db_passwd,
         db=db,
         charset='utf8',
         cursorclass=pymysql.cursors.DictCursor,

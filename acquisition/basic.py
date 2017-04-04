@@ -6,8 +6,9 @@ import os
 import time
 from datetime import date
 import datetime
+
 import util.mysqlcli as mysqlcli
-import util.quote_www as price
+import acquisition.quote_www as price
 import config.config as config
 
 def get_all_stock_code():

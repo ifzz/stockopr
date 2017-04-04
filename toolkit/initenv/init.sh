@@ -3,14 +3,19 @@
 PWD=$(cd `dirname $0`; pwd)
 DEP=$PWD/deps
 
+dnf install python3-tkinter
+
+dnf install python3-mysql #ImportError: No module named 'MySQLdb'
+pip3 install sqlalchemy # pandas to_sql
+
 # build and install libta_lib
 cd $DEP
 tar zxf ta-lib-0.4.0-src.tar.gz
 cd ta-lib
-./configure
+./configure > ta-lib_configure_`date "+%Y-%m-%d_%H-%M-%S"`.log
 #mkdir $DEP/libta_lib-devel; ./configure --prefix=$DEP/libta_lib-devel
-make -j16
-make install
+make -j16 > ta-lib_make_`date "+%Y-%m-%d_%H-%M-%S"`.log
+make install > ta-lib_makeinstall_`date "+%Y-%m-%d_%H-%M-%S"`.log
 ln -s /usr/local/lib/libta_lib.so.0.0.0 /usr/lib64/libta_lib.so.0
 
 cd $DEP
@@ -28,6 +33,8 @@ pip3 install matplotlib
 
 # install PyMySQL
 pip3 install PyMySQL
+# xlrd
+pip3 install xlrd
 # install psutil
 pip3 install psutil
 

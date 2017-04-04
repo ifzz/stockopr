@@ -2,6 +2,8 @@ from config.confighandler import ConfigHandler
 ch = ConfigHandler('config/config.ini', 'db')
 db_host = ch.db_host
 db = ch.db
+db_user = ch.db_user
+db_passwd = ch.db_passwd
 sql_tab_basic_info = ch.sql_table_basic_info
 sql_tab_quote = ch.sql_table_quote
 sql_tab_selected = ch.sql_table_selected

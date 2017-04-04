@@ -9,11 +9,10 @@ from queue import Empty
 from multiprocessing import Queue, Process
 
 sys.path.append(".")
-sys.path.append("util")
 
 #import stock.monitor.mysqlcli
 import util.mysqlcli as mysqlcli
-import util.basic as basic
+import acquisition.basic as basic
 
 db = 'stock'
 # csv 文件命名规则: sh#600000.csv sz#000001.csv
@@ -83,16 +82,21 @@ def save(csv_queue):
                     #reader = csv.DictReader(fp)
                     #for row in reader:
                     #AttributeError: 'dict' object has no attribute 'iteritems'
-                    key_list = ['code', 'trade_date', 'open', 'high', 'low', 'close', 'volume', 'turnover']
+
+                    #key_list = ['code', 'trade_date', 'open', 'high', 'low', 'close', 'volume', 'turnover']
+                    #key_list = ['code', 'trade_date', 'close', 'high', 'low', 'open', 'yestclose', 'updown', 'percent', 'hs', 'volume', 'turnover', 'tcap', 'mcap']
+                    key_list = ['code', 'trade_date', 'close', 'high', 'low', 'open', 'yestclose', 'updown', 'percent', 'hs', 'volume', 'turnover', 'zf']
                     #日期,股票代码,名称,收盘价,最高价,最低价,开盘价,前收盘,涨跌额,涨跌幅,换手率,成交量,成交金额,总市值,流通市值
                     #key_csv = [日期,收盘价,最高价,最低价,开盘价,成交量,成交金额]
                     #su = [1, 0, 6, 4, 5, 3, 11, 12]
-                    indice = [0, 6, 4, 5, 3, 11, 12] #subscript
+                    #indice = [0, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14] #subscript
+                    indice = [0, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] #subscript
                     #fmt_list = ['%s', '%s', '%f', '%f', '%f', '%f', '%d', '%d']
-                    fmt_list = ['%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s']
+                    #fmt_list = ['%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s']
 
                     key = ', '.join(key_list)
-                    fmt = ', '.join(fmt_list)
+                    #fmt = ', '.join(fmt_list)
+                    fmt = ', '.join(['%s' for i in range(len(key_list))])
                     sql_str = 'insert into quote({0}) values ({1})'.format(key, fmt)
 
                     for row in fp:
@@ -106,7 +110,11 @@ def save(csv_queue):
                             continue
                         for idx in indice:
                             #key_list.append(k)
-                            val_list.append(row[idx])
+                            val_list.append(row[idx] if row[idx] != 'None' else 0)
+                        if float(row[7]) == 0:
+                            val_list.append(0.0)
+                        else:
+                            val_list.append(round((float(row[4])-float(row[5]))/float(row[7])*100,2))
                         val = tuple(val_list)
                         val_many.append(val)
                         #c.execute(sql_str, val)
@@ -147,9 +155,11 @@ if __name__ == '__main__':
             print(file_csv, 'not exist')
             continue
         csv_queue.put(file_csv)
+    #csv_queue.put('data/csv/000001.csv')
 
     nproc_max = 10
     nproc = nproc_max if csv_queue.qsize() > nproc_max else csv_queue.qsize()
+    #nproc = 1
     p_list = [Process(target=save, args=(csv_queue,)) for i in range(nproc)]
     [p.start() for p in p_list]
     [p.join() for p in p_list]

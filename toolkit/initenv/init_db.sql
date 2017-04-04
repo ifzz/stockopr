@@ -12,29 +12,110 @@ use stock;
 -- 与股价挂钩的指标，就不记录历史数据了
 -- 基本信息，代码，名称，市盈率，市净率，板块，概念，
 -- 板块使用id
-create table if not exists basic_info(code varchar(8), name varchar(16), `type` varchar(8) default 'A股');
-CREATE TABLE future_variety (code varchar(8), name varchar(8), type varchar(8), prev_dc varchar(8), curr_dc varchar(8), next_dc varchar(8));
+create table if not exists basic_info(
+    code varchar(8),
+    name varchar(16),
+    `type` varchar(8) default 'A股'
+    );
+
+CREATE TABLE future_variety (
+    code varchar(8),
+    name varchar(8),
+    type varchar(8),
+    prev_dc varchar(8),
+    curr_dc varchar(8),
+    next_dc varchar(8)
+    );
 
 -- 日期 开盘价 最高价 最低价 收盘价 成交量(手) 成交金额(万元)
 -- 昨收 涨跌额 涨跌幅(%) 振幅(%) 换手率(%) 量比
-create table if not exists quote (code varchar(8), trade_date date, open float, high float, low float, close float, volume bigint, turnover bigint);
+-- create table if not exists quote (code varchar(8), trade_date date, open float, high float, low float, close float, volume bigint, turnover bigint);
+
+create table if not exists quote (
+    code varchar(8),
+    trade_date timestamp,
+    close float,
+    high float,
+    low float,
+    open float,
+    yestclose float,
+    updown float,
+    percent float,
+    hs float,
+    volume bigint,
+    turnover bigint,
+    lb float,
+    wb float,
+    zf float,
+    five_minute float
+    );
+
+create table if not exists financial_data (
+    code varchar(8),
+    trade_date timestamp,
+    pe float,
+    mcap bigint,
+    tcap bigint,
+    mfsum float,
+    mfratio2 bigint,
+    mfratio10 bigint
+    );
 
 -- 建仓
-create table selected(code varchar(8), added_date date, class varchar(8), rank integer);
-create table selected_history(code varchar(8), added_date date, class varchar(8), rank integer);
+create table selected(
+    code varchar(8),
+    added_date timestamp,
+    class varchar(8),
+    rank int
+    );
+
+create table selected_history(
+    code varchar(8),
+    added_date timestamp,
+    class varchar(8),
+    rank int
+    );
+
 -- 交易记录
-create table trade_detail (code varchar(8), trade_date date, op varchar(8), price float, count integer, account varchar(16));
-create table trade_detail_history (code varchar(8), trade_date date, op varchar(8), price float, count integer, account varchar(16));
+create table trade_detail (
+    code varchar(8),
+    trade_date timestamp,
+    op varchar(8),
+    price float,
+    count int,
+    account varchar(16)
+    );
+
+create table trade_detail_history (
+    code varchar(8),
+    trade_date timestamp,
+    op varchar(8),
+    price float,
+    count int,
+    account varchar(16)
+    );
 
 -- 业务逻辑
 -- 监控
-create table bought (code varchar(8), date date);
+create table bought (
+    code varchar(8),
+    date timestamp
+    );
 -- 平仓
-create table cleared (code varchar(8), date date);
+create table cleared (
+    code varchar(8),
+    date timestamp
+    );
 
 -- 账户
 -- op: i o s b a(adjust)
-create table account_detail (code varchar(16), trade_date date, op varchar(8), price float, count integer);
+create table account_detail (
+    code varchar(16),
+    trade_date timestamp,
+    op varchar(8), 
+    price float,
+    count int
+    );
 
 
 -- 索引
