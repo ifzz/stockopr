@@ -137,3 +137,66 @@ stages = ['3', '35', '354', '352', '3523', '3526', '35264', '35261', '352613', '
 
 
 key_list = ['code', 'name', 'trading_date', 'open', 'high', 'low', 'close', 'volume', 'turnover']
+
+'''
+selector
+'''
+T = 'W'
+T = 'D'
+D_MIN = 250
+W_MIN = 52
+MIN = D_MIN if T == 'D' else W_MIN
+
+DZ_MIN = 120 if T == 'D' else 25
+DD_MIN = 120 if T == 'D' else 25
+
+# 1.1^5 = 1.61
+DZ_PERCENT_LIMIT = 11 if T == 'D' else 61
+# 0.9^5 = 59.04
+DD_PERCENT_LIMIT = 11 if T == 'D' else 41
+
+HP_BOLL_BACK = 20 if T == 'D' else 4
+HP_BOLL_DURATION = 60 if T == 'D' else 12
+
+HP_DAY = 1
+HP_DURATION = -1
+HP_FIRST_N_MA = 5
+
+ALMOST_EQUAL = 1
+MA_NUM = 5
+MAS = [5, 10, 20, 30, 60]
+
+
+
+DT_DAY = 1
+DT_LAST_N_MA = 4
+
+# 多头最小涨幅, (ma5 - ma60)/ma60 * 100
+DT_MIN_UP_P = 5
+
+# boll中线, 10天以前
+DT_BOLL_DAY = 10
+DT_BOLL_DAY_AGO = 60
+
+DT_SAR_DAY = 5
+
+
+HT_MA_N = 10
+HT_RANGE = 10
+
+
+SECOND_DAY = 1
+SECOND_LAST_N_MA = 4
+
+
+TP_MA_N = 20
+TP_RANGE = 5
+
+
+D_PERCENT_EXP = 15
+D_NDAY = 5
+
+
+Z_PERCENT_EXP = 15
+Z_NDAY = 5
+

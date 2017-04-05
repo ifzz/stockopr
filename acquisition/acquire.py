@@ -14,6 +14,7 @@ import acquisition.basic as basic
 import acquisition.tx as tx
 import acquisition.wy as wy
 import acquisition.quote_db as quote_db
+import acquisition.quote_www as quote_www
 
 # timeout in seconds
 timeout = 5
@@ -32,7 +33,7 @@ def update_stock_basic_info(xlsfile):
 
 # 指数
 def save_sh_index_trade_info():
-    val = quote_db.get_price_urllib('999999')
+    val = quote_www.get_price_urllib('999999')
     if val:
         quote_db.insert_into_quote([val,])
 
@@ -75,14 +76,11 @@ def save_quote_wy():
             r1_sorted = sorted(r1, key = lambda x:x['code'])
             r2_sorted = sorted(r2, key = lambda x:x['code'])
             if r1_sorted != r2_sorted:
-                c.execute('insert into temp_quote_test select * from temp_quote;')
-                pass
+                c.execute('insert into quote select * from temp_quote;')
             else:
                 print('not trade day')
         except Exception as e:
             print(e)
-
-save_quote_wy()
 
 def save_quote():
     save_sh_index_trade_info()
