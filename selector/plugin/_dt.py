@@ -1,6 +1,7 @@
 #-*- coding: utf-8 -*-
 
-import acquisition.util as util
+import config.config as config
+import selector.util as util
 
 # begin天的maN成多头排列
 # 1, 4, 今天的ma10-ma60成多头排列

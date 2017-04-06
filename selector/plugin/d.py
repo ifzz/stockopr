@@ -1,7 +1,9 @@
 #-*- coding: utf-8 -*-
 
 import pandas
+import config.config as config
 import util.util as util
+import util.dt   as util_dt
 
 # n天跌幅
 # 10天跌15%, ma60向上
@@ -33,7 +35,7 @@ def d(quote, percent_exp=config.D_PERCENT_EXP, nday=config.D_NDAY):
             #datetime.datetime.utcfromtimestamp(x.tolist()/1e9)
             #datetime.datetime.utcfromtimestamp(x.astype('O')/1e9)
             #datetime.datetime.fromtimestamp(x.astype('O')/1e9)
-            trade_date = quote.index.values[-1].astype('M8[D]').astype('O') #'M8[ms]'
+            trade_date = util_dt.dt64_to_dt(quote.index.values[-1])
         else:
             trade_date = quote.index.values[-1]
         if util.pause_trade(trade_date):
@@ -44,7 +46,6 @@ def d(quote, percent_exp=config.D_PERCENT_EXP, nday=config.D_NDAY):
 
     #print('{}%'.format(percent))
     #print('%.2f%% %s %s' % (percent, '-'*50, quote.code[-1]))
-    print('%.2f%% %s' % (percent, '-'*50))
 
     return True
 

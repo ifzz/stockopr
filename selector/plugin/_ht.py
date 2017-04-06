@@ -3,7 +3,7 @@
 from util.macd import ma
 
 import config.config as config
-import acquisition.util as util
+import selector.util as util
 
 # 回调到ma30支撑点
 def ht_ma(quote, maN=config.HT_MA_N, almost=config.ALMOST_EQUAL, range=config.HT_RANGE):

@@ -1,5 +1,8 @@
 #-*- encoding: utf-8 -*-
 
+import time
+import datetime
+
 '''
 一、休市安排
 　　（一）元旦：1月1日（星期五）至1月3日（星期日）休市，1月4日（星期一）起照常开市。
@@ -128,3 +131,6 @@ def sumofyeartradeday(y):
         day = date(y, m, 1)
         days += sumofmonthtradeday(day)
     return days
+
+def dt64_to_dt(dt64):
+    return dt64.astype('M8[D]').astype('O')  #'M8[ms]'

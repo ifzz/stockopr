@@ -1,7 +1,10 @@
 #-*- coding: utf-8 -*-
 
+import pandas
+
 import config.config as config
 import util.util as util
+import util.dt as util_dt
 
 Z_PERCENT_EXP = 15
 Z_NDAY = 5
@@ -28,12 +31,12 @@ def z(quote, percent_exp=config.Z_PERCENT_EXP, nday=Z_NDAY):
     #    continue
 
     if percent > percent_exp:
-        if util.pause_trade(quote.index.values[-1]):
+        _d = util_dt.dt64_to_dt(quote.index.values[-1])
+        if util.pause_trade(_d):
             #print('{0}\t{1}\t{2} %(停牌)'.format(code, name, round(percent, 2)))
             return False
     else:
         return False
-    print('%.2f%% %s' % (percent, '-'*50))
 
     return True
 

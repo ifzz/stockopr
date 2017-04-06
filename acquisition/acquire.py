@@ -76,7 +76,8 @@ def save_quote_wy():
             r1_sorted = sorted(r1, key = lambda x:x['code'])
             r2_sorted = sorted(r2, key = lambda x:x['code'])
             if r1_sorted != r2_sorted:
-                c.execute('insert into quote select * from temp_quote;')
+                #c.execute('insert into quote select * from temp_quote;')
+                c.execute('insert into temp_quote_test select * from temp_quote;')
             else:
                 print('not trade day')
         except Exception as e:

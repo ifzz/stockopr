@@ -1,14 +1,16 @@
 #-*- coding: utf-8 -*-
 
 import config.config as config
-import acquisition.util as util
+import selector.util as util
+
+from util.macd import bbands
 
 # boll 曲线中线也许更好一些
 # r 表示取前n个ma
 def hp_ma(quote, begin=config.HP_DAY, duration=config.HP_DURATION, first_n_maN=config.HP_FIRST_N_MA, almost=config.ALMOST_EQUAL):
     if duration == -1:
         duration = begin
-    ma_arr = gen_ma(quote)
+    ma_arr = util.gen_ma(quote)
     for j in range(int(begin-duration), begin):
         i = -1 - j
         l = min([ma_arr[k]['ma'][i] for k in range(first_n_maN)])

@@ -1,4 +1,7 @@
+#-*- coding: utf-8 -*-
 
+from util import mysqlcli
+from config import config
 
 def add_selected_history(code):
     with mysqlcli.get_cursor() as c:
@@ -30,6 +33,7 @@ def add_selected(code, cls='HP', rank=9):
         c.execute(sql)
         r = c.fetchone()
         if r:
+            import datetime
             # r['added_date'], datetime.date
             #tm = time.strptime(r['added_date'], '%Y-%m-%d')
             #t = time.mktime(tm)

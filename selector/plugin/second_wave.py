@@ -1,10 +1,11 @@
 #-*- coding: utf-8 -*-
 
 import config.config as config
-import acquisition.util as util
+import selector.util as util
 
-from acquisition.plugin.ht import ht_ma
-from acquisition.plugin.dt import dt_ma
+from selector.plugin._ht import ht_ma
+from selector.plugin._dt import dt_ma
+from selector.plugin.hp  import hp_ma
 
 def second_wave(quote):
     # 20天前, 还在整理

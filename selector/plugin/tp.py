@@ -2,9 +2,9 @@
 
 from util.macd import ma
 import config.config as config
-import acquisition.util as util
-from acquisition.plugin.dt import dt_ma
-from acquisition.plugin.hp import hp_ma
+import selector.util as util
+from selector.plugin._dt import dt_ma
+from selector.plugin.hp import hp_ma
 
 def tp_ma(quote, maN=config.TP_MA_N, almost=config.ALMOST_EQUAL, range=config.TP_RANGE):
     ma20 = ma(quote, maN)
