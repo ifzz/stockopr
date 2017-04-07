@@ -35,12 +35,6 @@ note: macd histogram * 2 maybe better
 1 加监控:
 '''
 
-macd_threshold_hp = 0.2 #
-macd_threshold_0 = 0.03 # 高价股与低价股 相同走势 macd 值相差很大
-B = 'B'
-S = 'S'
-N = ''
-
 # note that all ndarrays must be the same length!
 inputs = {
     #'open': np.random.random(100),

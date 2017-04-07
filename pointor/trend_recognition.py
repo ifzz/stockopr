@@ -1,8 +1,8 @@
 #-*- encoding: utf-8 -*-
 
-import price
-import stage_handler
-from config import debug
+#import acquisition.quote_db as price
+import pointor.stage_handler as stage_handler
+from config.config import debug
 #from config import indicator
 #from tts import engine
 #from window import open_stock_realtime_graph
@@ -29,11 +29,11 @@ def percent(orig, curr):
     return 100 * (curr - orig)/orig
 
 class TrendRecognizer:
-    def __init__(self, code, quote, stage):
+    def __init__(self, code, quote):
         self.code   = code
         self.quote  = quote
         self.ind    = -1
-        self.stagehandler = stage
+        self.stagehandler = stage_handler.Stage()
         self.stagehandler.host = self # 彼此引用
         self.last   = -1
         self.close  = -1
@@ -84,7 +84,7 @@ class TrendRecognizer:
         else:
             if mm['max'] < mm35['max'] and self.close - mm['max'] <= indicator['lz_down']:
                 #只处理为一种信号, 并不作为真正的趋势逆转
-                notice_signal_transfer(stage)
+                notice_signal_transfer(self.stage)
             if percent(mm['max'], self.close) <= indicator['zx_down']:
                 self.stagehandler.chg_stage('3526', self.close, mm['max'])
             elif self.close < mm['min']:
@@ -125,7 +125,7 @@ class TrendRecognizer:
         else:
             if mm['max'] < mm3526['max'] and self.close - mm['max'] <= indicator['lz_down']:
                 #只处理为一种信号, 并不作为真正的趋势逆转
-                notice_signal_transfer(stage)
+                notice_signal_transfer(self.stage)
             if percent(mm['max'], self.close) <= indicator['zx_down']:
                 self.stagehandler.chg_stage('4', self.close, mm['max'])
             elif self.close < mm['min']: #多余的吧...
@@ -169,7 +169,7 @@ class TrendRecognizer:
         if self.close >= self.last:
             if mm['min'] > mm42['min'] and self.close - mm['min'] >= indicator['lz_up']:
                 #只处理为一种信号, 并不作为真正的趋势逆转
-                notice_signal_transfer(stage)
+                notice_signal_transfer(self.stage)
             if percent(mm['min'], self.close) >= indicator['zx_up']:
                 self.stagehandler.chg_stage('4251', mm['min'], self.close)
             elif self.close > mm['max']:
@@ -206,7 +206,7 @@ class TrendRecognizer:
         if self.close >= self.last:
             if mm['min'] > mm4251['min'] and self.close - mm['min'] >= indicator['lz_up']:
                 #只处理为一种信号, 并不作为真正的趋势逆转
-                notice_signal_transfer(stage)
+                notice_signal_transfer(self.stage)
             if percent(mm['min'], self.close) >= indicator['zx_up']:
                 self.stagehandler.chg_stage('3', mm['min'], self.close)
             elif self.close > mm['max']:
@@ -266,12 +266,3 @@ class TrendRecognizer:
 
     def print_result(self):
         self.stagehandler.print_stage_info()
-
-if __name__ == '__main__':
-    code = '600839'
-    quote = price.get_price_info_df_db(code, 250)
-    stage = stage_handler.Stage()
-
-    trendr = TrendRecognizer(code, quote, stage)
-    trendr.trend_recognition()
-    trendr.print_result()

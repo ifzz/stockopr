@@ -1,5 +1,5 @@
 #import redis
-from config import dbip, dbport
+from config.config import dbip, dbport
 import time
 
 # conn = redis.StrictRedis(host='192.168.1.227', port=6379, db=0, password='server')

@@ -131,14 +131,14 @@ def get_price_info_df_db_week(code, trade_date = 250, end_date = None):
     # W M Q 12D 30min
     period_type = 'W'
     #p.set_index('trade_date', inplace=True)
-    period_data = p.resample(period_type, how='last')
+    period_data = p.resample(period_type).last()
     #period_data['change'] = p['change'].resample(period_type, how=lambda x:(x+1.0).prod() - 1.0, axis=0);
-    period_data['open'] = p['open'].resample(period_type, how='first');
-    period_data['high'] = p['high'].resample(period_type, how='max');
-    period_data['low'] = p['low'].resample(period_type, how='min');
-    period_data['close'] = p['close'].resample(period_type, how='last');
-    period_data['volume'] = p['volume'].resample(period_type, how='sum');
-    period_data['turnover'] = p['turnover'].resample(period_type, how='sum');
+    period_data['open'] = p['open'].resample(period_type).first();
+    period_data['high'] = p['high'].resample(period_type).max();
+    period_data['low'] = p['low'].resample(period_type).min();
+    period_data['close'] = p['close'].resample(period_type).last();
+    period_data['volume'] = p['volume'].resample(period_type).sum();
+    period_data['turnover'] = p['turnover'].resample(period_type).sum();
 
     #period_data.set_index('trade_date', inplace=True)
     period_data = period_data[period_data['code'].notnull()]

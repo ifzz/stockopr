@@ -192,3 +192,13 @@ D_PERCENT_EXP = 15
 D_NDAY = 5
 Z_PERCENT_EXP = 15
 Z_NDAY = 5
+
+
+''' macd '''
+macd_threshold_hp = 0.2 #
+macd_threshold_0 = 0.03 # 高价股与低价股 相同走势 macd 值相差很大
+
+
+B = 'B'
+S = 'S'
+N = ''
