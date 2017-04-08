@@ -49,8 +49,17 @@ def save_quote_tx():
 
 from sqlalchemy import create_engine
 
+# 网易行情接口
 def save_quote_wy():
     df_quote = wy.get_quote()
+
+    # 部分值转换
+    key_list = ['PERCENT', 'HS', 'WB', 'ZF', 'FIVE_MINUTE']
+    for key in key_list:
+        df_quote[key] = round(df_quote[key]*100, 2)
+    key = 'LB'
+    df_quote[key] = round(df_quote[key], 2)
+    #print(df_quote[df_quote['CODE'] == '600839'])
 
     with mysqlcli.get_cursor() as c:
         try:

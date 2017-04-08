@@ -33,7 +33,7 @@ CREATE TABLE future_variety (
 
 create table if not exists quote (
     code varchar(8),
-    trade_date timestamp,
+    trade_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     close float,
     high float,
     low float,
@@ -52,7 +52,7 @@ create table if not exists quote (
 
 create table if not exists financial_data (
     code varchar(8),
-    trade_date timestamp,
+    trade_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     pe float,
     mcap bigint,
     tcap bigint,
@@ -64,14 +64,14 @@ create table if not exists financial_data (
 -- 建仓
 create table selected(
     code varchar(8),
-    added_date timestamp,
+    added_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     class varchar(8),
     rank int
     );
 
 create table selected_history(
     code varchar(8),
-    added_date timestamp,
+    added_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     class varchar(8),
     rank int
     );
@@ -79,7 +79,7 @@ create table selected_history(
 -- 交易记录
 create table trade_detail (
     code varchar(8),
-    trade_date timestamp,
+    trade_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     op varchar(8),
     price float,
     count int,
@@ -88,7 +88,7 @@ create table trade_detail (
 
 create table trade_detail_history (
     code varchar(8),
-    trade_date timestamp,
+    trade_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     op varchar(8),
     price float,
     count int,
@@ -111,7 +111,7 @@ create table cleared (
 -- op: i o s b a(adjust)
 create table account_detail (
     code varchar(16),
-    trade_date timestamp,
+    trade_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     op varchar(8), 
     price float,
     count int
@@ -130,4 +130,4 @@ create unique index quote_code_trade_date on quote(code,trade_date);
 
 
 
--- current_date() CURRENT_TIMESTAMP, all is ok
+-- current_date() CURRENT_timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, all is ok
