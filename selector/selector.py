@@ -13,6 +13,8 @@ import selector.plugin.tp as tp
 import selector.plugin.z as z
 import selector.plugin.d as d
 
+import selector.plugin.zf as zf
+
 import selector.selected as selected
 
 # 横盘 第二波 突破 涨 跌 大涨 大跌
@@ -27,7 +29,8 @@ selector = {
 'z'      : z.z,
 'dz'     : z.dz,
 'd'      : d.d,
-'dd'     : d.dd
+'dd'     : d.dd,
+'zf'     : zf.zf
 }
 
 

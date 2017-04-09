@@ -53,6 +53,13 @@ from sqlalchemy import create_engine
 def save_quote_wy():
     df_quote = wy.get_quote()
 
+    # 修改数据库
+    '''
+    update quote set
+    percent=FORMAT(percent*100, 2), hs=FORMAT(hs*100, 2), lb=FORMAT(lb, 2),
+    wb=FORMAT(wb*100, 2), zf=FORMAT(zf*100, 2), five_minute=FORMAT(five_minute*100, 2)
+    where trade_date >= '2017-04-05 00:00:00';
+    '''
     # 部分值转换
     key_list = ['PERCENT', 'HS', 'WB', 'ZF', 'FIVE_MINUTE']
     for key in key_list:

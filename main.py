@@ -10,9 +10,10 @@ def test_save_quote():
 def test_select():
     import selector.selector as selector
     import acquisition.basic as basic
-    code_list = selector.select('z')
+    code_list = selector.select('zf')
     for code in code_list:
         print(code, basic.get_stock_name(code))
+    print('+++' + len(code_list) + '+++')
 
 def test_trend_recognition():
     import pointor.trend_recognition as tr
@@ -41,6 +42,6 @@ def test_signal():
 
 if __name__ == '__main__':
     #test_save_quote()
-    #test_select()
+    test_select()
     #test_trend_recognition()
-    test_signal()
+    #test_signal()

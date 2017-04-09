@@ -97,7 +97,7 @@ def get_price_info_df_db_day(code, trade_date = 1, end_date = None):
     end_date = end_date if end_date and len(end_date) > 0 else datetime.date.today()
 
     conn = mysqlcli.get_connection()
-    key_list = ['code', 'trade_date', 'open', 'high', 'low', 'close', 'volume', 'turnover']
+    key_list = ['code', 'trade_date', 'open', 'high', 'low', 'close', 'volume', 'turnover', 'lb', 'wb', 'zf']
     table = [config.sql_tab_basic_info, config.sql_tab_quote]
     on = 'quote.code = basic_info.code'.format(code, trade_date)
     where = 'quote.code = "{0}" and trade_date <= "{1}" order by trade_date desc limit {2}'.format(code, end_date, trade_date)
@@ -156,5 +156,3 @@ def get_price_stat_db(code, pv, day, w):
         c.execute(sql)
         r = c.fetchone()
         return list(r.values())[0]
-
-
