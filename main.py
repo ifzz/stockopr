@@ -13,7 +13,7 @@ def test_select():
     code_list = selector.select('zf')
     for code in code_list:
         print(code, basic.get_stock_name(code))
-    print('+++' + len(code_list) + '+++')
+    print('+++ {0} +++'.format(len(code_list)))
 
 def test_trend_recognition():
     import pointor.trend_recognition as tr

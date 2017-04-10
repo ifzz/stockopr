@@ -23,7 +23,7 @@ def zf(quote):
     nday = config.ZF_NDAY
     df_quote = quote[len(quote)-nday:]['zf'] # Series
     # df_quote.mean()
-    if df_quote.min() > config.ZF_PERCENT_MIN:
+    if df_quote.min() > config.ZF_PERCENT_MIN and df_quote.mean() < config.ZF_PERCENT_AVG_MAX:
         return True
 
     return False

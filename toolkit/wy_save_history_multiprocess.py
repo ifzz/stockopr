@@ -2,11 +2,12 @@
 
 import sys
 import time
-import pymysql.cursors
 import os
 import csv
 from queue import Empty
 from multiprocessing import Queue, Process
+
+import pymysql.cursors
 
 sys.path.append(".")
 

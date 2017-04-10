@@ -33,20 +33,44 @@ selector = {
 'zf'     : zf.zf
 }
 
+from queue import Empty
+from multiprocessing import Queue, Process
+
+def _select(q, rq, cls):
+    while True:
+        try:
+            code =q.get_nowait()
+
+            p = quote_db.get_price_info_df_db(code, 500, '', config.T)
+            if util.filter_quote(p):
+                continue
+
+            rc = selector.get(cls)(p)
+            if rc:
+                selected.add_selected(code)
+                rq.put(code)
+        except Empty:
+            break
+        except Exception as e:
+            print(e, file_csv)
 
 def select(cls):
     r = []
     code_list = basic.get_all_stock_code()
     #code_list = future.get_future_contract_list()
 
-    for code in code_list:
-        p = quote_db.get_price_info_df_db(code, 500, '', config.T)
-        if util.filter_quote(p):
-            continue
+    rq = Queue()
 
-        rc = selector.get(cls)(p)
-        if rc:
-            selected.add_selected(code)
-            r.append(code)
+    code_queue = Queue()
+    for code in code_list:
+        code_queue.put(code)
+
+    nproc = 10
+    p_list = [Process(target=_select, args=(code_queue, rq, cls,)) for i in range(nproc)]
+    [p.start() for p in p_list]
+    [p.join() for p in p_list]
+
+    for _i in range(rq.qsize()):
+        r.append(rq.get_nowait())
 
     return r
