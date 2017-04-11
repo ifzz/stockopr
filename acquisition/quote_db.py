@@ -82,32 +82,44 @@ df = psql.read_sql(('select "Timestamp","Value" from "MyTable" '
                    db,params={"dstart":datetime(2014,6,24,16,0),"dfinish":datetime(2014,6,24,17,0)},
                    index_col=['Timestamp'])
 '''
-def get_price_info_df_db(code, trade_date = 0, end_date = None, period_type = 'W'):
+def get_price_info_df_db(code, trade_date = 0, end_date = None, period_type = 'W', conn=None):
     if period_type == 'D':
         if trade_date == 0:
             trade_date = 1
-        df = get_price_info_df_db_day(code, trade_date, end_date)
+        df = get_price_info_df_db_day(code, trade_date, end_date, conn)
     elif period_type == 'W':
         if trade_date == 0:
             trade_date = 500
-        df = get_price_info_df_db_week(code, trade_date, end_date)
+        df = get_price_info_df_db_week(code, trade_date, end_date, conn)
     return df
 
-def get_price_info_df_db_day(code, trade_date = 1, end_date = None):
+def get_price_info_df_db_day(code, trade_date = 1, end_date = None, conn = None):
     end_date = end_date if end_date and len(end_date) > 0 else datetime.date.today()
 
-    conn = mysqlcli.get_connection()
+    if conn == None:
+        _conn = mysqlcli.get_connection()
+    else:
+        _conn = conn
+
+    #if type(code) == list:
+    #    _code = '"' + '","'.join(code)
+    #    _code = _code[:-2]
+    #else:
+    #    _code = code
+    _code = code
     key_list = ['code', 'trade_date', 'open', 'high', 'low', 'close', 'volume', 'turnover', 'lb', 'wb', 'zf']
     table = [config.sql_tab_basic_info, config.sql_tab_quote]
-    on = 'quote.code = basic_info.code'.format(code, trade_date)
-    where = 'quote.code = "{0}" and trade_date <= "{1}" order by trade_date desc limit {2}'.format(code, end_date, trade_date)
+    on = '{0}.code = basic_info.code'.format(table[1])
+    where = '{3}.code = "{0}" and trade_date <= "{1}" order by trade_date desc limit {2}'.format(_code, end_date, trade_date, table[1])
     sql = 'SELECT {0} FROM {1} WHERE {5}'.format(', '.join(key_list), table[1], on, 'name', table[0], where)
 
-    df = pd.read_sql(sql, con=conn, index_col=['trade_date'])
+    df = pd.read_sql(sql, con=_conn, index_col=['trade_date'])
     #df = pd.read_sql(sql, con=conn)
     #df.index.names = ['date']
     #df = pd.read_sql(sql, con=conn)
-    conn.close()
+
+    if conn == None:
+        _conn.close()
 
     #df = df.reset_index('trade_date') # no
     #df = df.reindex(df['trade_date']) # ok, but no value, because new index not eq old index
@@ -123,8 +135,8 @@ def get_price_info_df_db_day(code, trade_date = 1, end_date = None):
 
     return df
 
-def get_price_info_df_db_week(code, trade_date = 250, end_date = None):
-    p = get_price_info_df_db_day(code, trade_date, end_date)
+def get_price_info_df_db_week(code, trade_date = 250, end_date = None, conn = None):
+    p = get_price_info_df_db_day(code, trade_date, end_date, conn)
     p.index = pd.to_datetime(p.index)
     #print(p.columns)
 

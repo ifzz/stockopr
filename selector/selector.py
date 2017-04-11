@@ -1,5 +1,8 @@
 #-*- coding: utf-8 -*-
 
+import os
+import datetime
+
 import config.config as config
 import selector.util as util
 
@@ -37,11 +40,15 @@ from queue import Empty
 from multiprocessing import Queue, Process
 
 def _select(q, rq, cls):
+    import util.mysqlcli as mysqlcli
+    _conn = mysqlcli.get_connection()
     while True:
         try:
-            code =q.get_nowait()
+            #code = q.get_nowait()
+            code = q.get(True, 0.1)
+            #print(code)
 
-            p = quote_db.get_price_info_df_db(code, 500, '', config.T)
+            p = quote_db.get_price_info_df_db(code, 500, '', config.T, _conn)
             if util.filter_quote(p):
                 continue
 
@@ -50,9 +57,11 @@ def _select(q, rq, cls):
                 selected.add_selected(code)
                 rq.put(code)
         except Empty:
+            #print('{0} [{1}]: finished'.format(datetime.datetime.now(), os.getpid()))
             break
         except Exception as e:
-            print(e, file_csv)
+            print(e, q)
+    _conn.close()
 
 def select(cls):
     r = []

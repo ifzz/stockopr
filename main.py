@@ -1,4 +1,7 @@
 #-*- coding: utf-8 -*-
+
+import time
+
 #import toolkit.wy_save_history_multiprocess
 import util.macd
 #import acquisition.wy as wy
@@ -41,7 +44,10 @@ def test_signal():
     #if now < end_time_pm and now > start_time_am and basic.istradeday(today):
 
 if __name__ == '__main__':
+    t = time.time()
     #test_save_quote()
     test_select()
     #test_trend_recognition()
     #test_signal()
+
+    print('{0}'.format(time.time() - t))

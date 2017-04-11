@@ -125,6 +125,9 @@ create index quote_code on quote(code);
 create index quote_trade_date on quote(trade_date);
 create unique index quote_code_trade_date on quote(code,trade_date);
 
+create index quote_code on quote_myisam(code);
+create index quote_trade_date on quote_myisam(trade_date);
+create unique index quote_code_trade_date on quote_myisam(code,trade_date);
 -- mysql> insert into history_price (code, trade_day) values("600839","2015-12-25"); --date 可以这样插入
 -- ERROR 1062 (23000): Duplicate entry '600839-2015-12-25' for key 'history_price_code_trade_day'
 
