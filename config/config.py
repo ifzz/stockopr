@@ -195,7 +195,11 @@ Z_NDAY = 5
 
 ZF_NDAY = 20
 ZF_PERCENT_AVG_MAX = 4
-ZF_PERCENT_MIN = 2
+ZF_PERCENT_MIN = 1.5
+
+QD_NDAY = 60
+QD_PERCENT_MAX = 15
+QD_PERCENT_MIN = 5
 
 ''' macd '''
 macd_threshold_hp = 0.2 #

@@ -12,11 +12,13 @@ import acquisition.quote_db as quote_db
 import selector.plugin.hp as hp
 import selector.plugin.second_wave as second_wave
 import selector.plugin.tp as tp
+import selector.plugin.qd as qd
 
 import selector.plugin.z as z
 import selector.plugin.d as d
 
 import selector.plugin.zf as zf
+import selector.plugin.qd as qd
 
 import selector.selected as selected
 
@@ -29,11 +31,13 @@ selector = {
 '2nd'    : second_wave.second_wave,
 '2nd2'   : second_wave.second_wave2,
 'tp'     : tp.tp,
+'qd'     : qd.qd,
 'z'      : z.z,
 'dz'     : z.dz,
 'd'      : d.d,
 'dd'     : d.dd,
-'zf'     : zf.zf
+'zf'     : zf.zf,
+'qd'     : qd.qd
 }
 
 from queue import Empty
