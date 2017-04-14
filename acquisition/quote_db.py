@@ -82,7 +82,7 @@ df = psql.read_sql(('select "Timestamp","Value" from "MyTable" '
                    db,params={"dstart":datetime(2014,6,24,16,0),"dfinish":datetime(2014,6,24,17,0)},
                    index_col=['Timestamp'])
 '''
-def get_price_info_df_db(code, trade_date = 0, end_date = None, period_type = 'W', conn=None):
+def get_price_info_df_db(code, trade_date = 0, end_date = None, period_type = 'D', conn=None):
     if period_type == 'D':
         if trade_date == 0:
             trade_date = 1
