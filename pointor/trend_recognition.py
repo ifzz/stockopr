@@ -1,21 +1,25 @@
 #-*- encoding: utf-8 -*-
 
-#import acquisition.quote_db as price
 import pointor.stage_handler as stage_handler
 from config.config import debug
-#from config import indicator
-#from tts import engine
-#from window import open_stock_realtime_graph
+from config import config
 
-#from rediscli import set_stage_info, exec_cmd, save_cur_stage, get_cur_stage, get_all_stage, del_all_stages, save_stage_info, get_stage_info
+'''
+策略: 只吃鱼中, 不吃鱼头, 不吃鱼尾
+忽略极端走势: 354, 423, 发送警告信息即可
+'''
 
 # 逆转信号 -> 突破之后转换为 3/4
 
 # 转向 逆转 突破 异动
-zx = 6
-lz = 3
-tp = 3
-indicator = {'zx_up':zx, 'lz_up':lz, 'tp_up':tp, 'zx_down':-1*zx, 'lz_down':-1*lz, 'tp_down':-1*tp}
+indicator = {
+        'zx_up'   : config.TR_ZX,
+        'lz_up'   : config.TR_LZ,
+        'tp_up'   : config.TR_TP,
+        'zx_down' : -1*config.TR_ZX,
+        'lz_down' : -1*config.TR_LZ,
+        'tp_down' : -1*config.TR_TP
+        }
 
 def notice_signal_transfer(stock_info):
     return
@@ -28,21 +32,57 @@ def notice_signal_transfer(stock_info):
 def percent(orig, curr):
     return 100 * (curr - orig)/orig
 
+'''
+时间 + 价格
+'''
+#class StockTrendRecognizerInfo:
+#    def __init__(self, code, quote=None):
+#        self.code     = code
+#        self.quote    = quote
+#        self.quote_rt = []
+#        self.stagehandler    = stage_handler.Stage()
+#        self.stagehandler.tr = self # 彼此引用
+#        self.close  = -1
+#        self.last   = -1
+#        self.dt     = '' # datetime
+#        self.ind    = -1
+#        self.flag   = -1 # 1, update
+
 class TrendRecognizer:
-    def __init__(self, code, quote):
-        self.code   = code
-        self.quote  = quote
-        self.ind    = -1
-        self.stagehandler = stage_handler.Stage()
-        self.stagehandler.host = self # 彼此引用
-        self.last   = -1
+    def __init__(self, code, quote=None):
+        self.code     = code
+        self.quote    = quote
+        self.quote_rt = []
+        self.stagehandler    = stage_handler.Stage()
+        self.stagehandler.tr = self # 彼此引用
         self.close  = -1
+        self.last   = -1
+        self.dt     = '' # datetime
+        self.ind    = -1
         self.flag   = -1 # 1, update
 
-        self.stage_dict = {'3':self._3, '35':self._35, '354':self._354, '352':self._352, '3523':self._3523,
-                '3526':self._3526, '35264':self._35264, '35261':self._35261, '352613':self._35261, '352614':self._352614,
-                '4':self._4, '42':self._42, '423':self._423, '425':self._425, '4254':self._4254,
-                '4251':self._4251, '42513':self._42513, '42516':self._42516, '425164':self._425164, '425163':self._425163}
+        self.stage_dict = {
+                '3'      : self._3,
+                '35'     : self._35,
+                '354'    : self._354,
+                '352'    : self._352,
+                '3523'   : self._3523,
+                '3526'   : self._3526,
+                '35264'  : self._35264,
+                '35261'  : self._35261,
+                '352613' : self._35261,
+                '352614' : self._352614,
+                '4'      : self._4,
+                '42'     : self._42,
+                '423'    : self._423,
+                '425'    : self._425,
+                '4254'   : self._4254,
+                '4251'   : self._4251,
+                '42513'  : self._42513,
+                '42516'  : self._42516,
+                '425164' : self._425164,
+                '425163' : self._425163
+                }
 
     #目前处于上升趋势
     def _3(self):
@@ -63,9 +103,10 @@ class TrendRecognizer:
             if percent(mm['min'], self.close) >= indicator['zx_up']:
                 self.stagehandler.chg_stage('352', mm['min'], self.close)
         else:
-            if percent(mm['max'], self.close) <= indicator['zx_down'] + indicator['lz_down']:
-                self.stagehandler.chg_stage('4', self.close, mm['max'])
-            elif self.close < mm['min']:
+            #if percent(mm['max'], self.close) <= indicator['zx_down'] + indicator['lz_down']:
+            #    self.stagehandler.chg_stage('4', self.close, mm['max'])
+            #elif self.close < mm['min']:
+            if self.close < mm['min']:
                 self.stagehandler.set_stage_info(cur_stage, self.close, mm['max'])
 
     def _354(self):
@@ -224,8 +265,39 @@ class TrendRecognizer:
     def _425163(self):
         pass
 
+    def _init_tr(self, close):
+        if self.close < 0:
+            self.close = close
+            return
+        else:
+            self.last = self.close
+            self.close = close
+            cur_stage = '3' if close > self.last else '4'
+            # init
+            self.stagehandler.set_cur_stage(cur_stage)
+            self.stagehandler.set_stage_info(cur_stage, min(self.close, self.last), max(self.close, self.last))
+            self.stagehandler.update_stage_info(cur_stage, start=self.quote.index[0], end=self.quote.index[1])
+            #print(self.stagehandler.stage_info)
+            return cur_stage
 
-    def trend_recognition(self):
+    def _trend_recognition(self, dt, close):
+        cur_stage = self.stagehandler.get_cur_stage()
+        if not cur_stage:
+            cur_stage = self._init_tr(close)
+            if not cur_stage:
+                return
+        else:
+            self.last  = self.close
+            self.close = close
+            self.dt    = dt
+
+        if self.stagehandler.get_pre_stage() != cur_stage:
+            self.stagehandler.set_pre_stage(cur_stage)
+            #self.stagehandler.update_info()
+
+        self.stage_dict.get(cur_stage)()
+
+    def trend_recognition_quote(self):
         #保存数据库比较好
         '''
         hset stock_info cur_stage
@@ -237,32 +309,21 @@ class TrendRecognizer:
         #记录关键值和当前值
         '''
 
-        pre_stage = None
-        for close in self.quote.close.values:
-            #print(close)
+        #for close in self.quote.close.values:
+        for ind, close in enumerate(self.quote.close):
+            #print(ind, self.quote.index[ind], close)
             self.ind += 1 #indicator
-            cur_stage = self.stagehandler.get_cur_stage()
-            if not cur_stage:
-                if self.close < 0:
-                    self.close = close
-                    continue
-                else:
-                    self.last = self.close
-                    self.close = close
-                    cur_stage = '3' if close > self.last else '4'
-                    # init
-                    self.stagehandler.set_cur_stage(cur_stage)
-                    self.stagehandler.set_stage_info(cur_stage, min(self.close, self.last), max(self.close, self.last))
-                    self.stagehandler.update_stage_info(cur_stage, start=self.quote.index[0], end=self.quote.index[1])
-                    #print(self.stagehandler.stage_info)
-            else:
-                self.last = self.close
-                self.close = close
-            if pre_stage != cur_stage:
-                pre_stage = cur_stage
-                #self.stagehandler.update_info()
+            dt = self.quote.index[ind]
+            self._trend_recognition(dt, close)
 
-            self.stage_dict.get(cur_stage)()
+    def trend_recognition(self, dt, close):
+        if self.quote:
+            trend_recognition_quote()
+            self.quote = None
+        self._trend_recognition(dt, close)
+
+    def trend_recognition(self):
+        self.trend_recognition_quote()
 
     def print_result(self):
         self.stagehandler.print_stage_info()

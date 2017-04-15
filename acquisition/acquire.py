@@ -74,7 +74,7 @@ def save_quote_wy():
             c.execute('truncate table temp_quote')
 
             # MySql connection in sqlAlchemy
-            engine = create_engine('mysql://{0}:{1}@127.0.0.1:3306/stock?charset=utf8'.format(config.db_user, config.db_passwd))
+            engine = create_engine('mysql+pymysql://{0}:{1}@127.0.0.1:3306/stock?charset=utf8'.format(config.db_user, config.db_passwd))
             connection = engine.connect()
 
             # Do not insert the row number (index=False)

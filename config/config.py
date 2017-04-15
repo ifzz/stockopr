@@ -208,6 +208,9 @@ QD_PERCENT_MIN = 10
 macd_threshold_hp = 0.2 #
 macd_threshold_0 = 0.03 # 高价股与低价股 相同走势 macd 值相差很大
 
+TR_ZX = 6
+TR_TP = 3
+TR_LZ = 3
 
 B = 'B'
 S = 'S'
